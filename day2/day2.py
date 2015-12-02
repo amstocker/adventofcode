@@ -26,7 +26,7 @@ if __name__ == "__main__":
 Part 2
 """
 def ribbon_needed(dims):
-    ribbon = 2*sum(sorted(dims)[:2])
+    ribbon = 2*sum(sorted(dims)[:-1])
     bow = reduce(mul, dims, 1)
     return ribbon + bow
 
