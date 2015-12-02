@@ -15,7 +15,7 @@ if __name__ == "__main__":
 Part 1
 """
 def wrapping_needed(dims):
-    areas = [reduce(mul, c, 1) for c in combinations(dims, 2)]
+    areas = [reduce(mul, c, 1) for c in combinations(dims, len(dims)-1)]
     return 2*sum(areas) + min(areas)
 
 if __name__ == "__main__":
