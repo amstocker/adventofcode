@@ -26,7 +26,7 @@ def search(data, start=None, end=None):
         start = 0
     if not end:
         end = len(data)
-    i = start + int((end - start) / 2)
+    i = (start + end) // 2
     current_floor = floor(data[:i])
     if current_floor < -1:
         return search(data, start, i)
