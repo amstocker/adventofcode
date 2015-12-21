@@ -3,10 +3,10 @@ open Printf
 let read_file filename = 
   let ic = open_in filename in
   let n = in_channel_length ic in
-  let b = String.create n in
-  really_input ic b 0 n;
+  let s = String.create n in
+  really_input ic s 0 n;
   close_in ic;
-  (b)
+  (s)
 
 let explode s =
   let rec exp i l =
