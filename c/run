@@ -1,5 +1,5 @@
 #!/bin/bash
 
-gcc -std=c99 -Wall -Werror aoc.h error.c utils.c $1.c -o $1
+gcc -std=c99 -Wall -Werror aoc.h error.c utils.c quadtree.c $1.c -o $1
 ./$1
 rm $1
