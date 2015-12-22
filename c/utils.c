@@ -1,22 +1,6 @@
 #include "aoc.h"
 
 
-int str_count_lines(const char *str) {
-    int count = 1;
-    while (*str) {
-        if (*str == '\n') {
-            str++;
-            if (*str == '\0') {
-                break;
-            } else {
-                count++;
-            }
-        } else str++;
-    }
-    return count;
-}
-
-
 int int_array_min(const int *array, const int len) {
     int mele = array[0];
     for (int i = 1; i < len; i++) {

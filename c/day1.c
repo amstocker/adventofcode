@@ -1,50 +1,24 @@
 #include "aoc.h"
 
 
-int find_floor(char *in) {
-    int floor = 0;
-    while (*in) {
-        switch (*in++) {
-            case '(': floor++; break;
-            case ')': floor--; break;
-        }
-    }
-    return floor;
-}
+int main() {
+    FILE *fp = fopen("day1_input.txt", "r");
+    char c;
 
-
-int find_ground_floor(char *in) {
     int floor = 0;
     int index = 0;
-    while (*in) {
-        switch (*in++) {
+
+    while ((c = fgetc(fp)) != EOF) {
+        switch(c) {
             case '(': floor++; break;
             case ')': floor--; break;
         }
-        index ++;
-        if (floor == -1) break;
+        index++;
+        if (floor == -1) {
+            printf("first basement level (-1): %d\n", index);
+        }
     }
-    return index;
-}
+    printf("final floor: %d\n", floor);
 
-
-void part1(char *in) {
-    printf("floor: %d\n", find_floor(in));
-}
-
-
-void part2(char *in) {
-    printf("ground floor: %d\n", find_ground_floor(in));
-}
-
-
-int main(int argc, char *argv[argc+1]) {
-    
-    char *in = input_open("day1_input.txt");
-    
-    part1(in);
-    part2(in);
-
-    free(in);
     return 0;
 }
