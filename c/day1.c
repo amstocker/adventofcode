@@ -17,11 +17,11 @@ int find_ground_floor(char *in) {
     int floor = 0;
     int index = 0;
     while (*in) {
-        index ++;
         switch (*in++) {
             case '(': floor++; break;
             case ')': floor--; break;
         }
+        index ++;
         if (floor == -1) break;
     }
     return index;
