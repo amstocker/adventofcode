@@ -23,12 +23,9 @@ int *make_3tuples(char* in, int len) {
         memcpy(buf, start, (int)(in-start));
         buf[BUF_SIZE - 1] = '\0';
         
-        // parse line into 3-tuple and memcpy to array
-        int tup[3];
-        if (sscanf(buf, "%dx%dx%d", &tup[0], &tup[1], &tup[2]) == EOF) {
+        if (sscanf(buf, "%dx%dx%d", ptr, ptr+1, ptr+2) == EOF) {
             error("error scanning list of package sizes");
         }
-        memcpy(ptr, tup, sizeof(int) * 3);
         ptr += 3;
         
         if (*in == '\n') {
@@ -39,23 +36,35 @@ int *make_3tuples(char* in, int len) {
 }
 
 
-int pt1_wrapping_needed(int *array) {
-    int *tmp = array;
-    int l = *tmp++,
-        w = *tmp++,
-        h = *tmp;
+int wrapping_needed(int l, int w, int h) {
     int areas[] = { l*w, w*h, h*l };
     return 2 * int_array_sum(areas, 3) + int_array_min(areas, 3);
+}
+
+
+int ribbon_needed(int *array) {
+    int *mins = int_array_mins(array, 3, 2);
+    return 2 * int_array_sum(mins, 2) + int_array_prod(array, 3);
 }
 
 
 void part1(int* tuples, int len) {
     int sum = 0;
     for (int i = 0; i < len; i++) {
-        sum += pt1_wrapping_needed(tuples);
+        sum += wrapping_needed(tuples[0], tuples[1], tuples[2]);
         tuples += 3;
     }
     printf("part I sum: %d\n", sum);
+}
+
+
+void part2(int* tuples, int len) {
+    int sum = 0;
+    for (int i = 0; i < len; i++) {
+        sum += ribbon_needed(tuples);
+        tuples += 3;
+    }
+    printf("part II sum: %d\n", sum);
 }
 
 
@@ -65,6 +74,7 @@ int main(int argc, char *argv[argc+1]) {
     int *tuples = make_3tuples(in, nlines);
 
     part1(tuples, nlines);
+    part2(tuples, nlines);
 
     free(in);
     free(tuples);
