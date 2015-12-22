@@ -11,9 +11,7 @@ int str_count_lines(const char *str) {
             } else {
                 count++;
             }
-            str--;
-        }
-        str++;
+        } else str++;
     }
     return count;
 }
