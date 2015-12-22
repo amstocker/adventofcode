@@ -51,16 +51,6 @@ static QTNode *insert(QTNode *par, int nx, int ny, void *data) {
         return par;
     }
 
-#define QT_INSERT(dir)                              \
-        if (par->dir) {                             \
-            return insert(par->dir, nx, ny, data);  \
-        } else {                                    \
-            QTNode *new = QTNode_new(nx, ny, data); \
-            par->dir = new;                         \
-            new->parent = par;                      \
-            return new;                             \
-        }                                           \
-
 #define QT_TRAVERSE(MACRO)                          \
     if ((nx > par->x) && (ny >= par->y)) {          \
         MACRO(ne);                                  \
@@ -79,6 +69,16 @@ static QTNode *insert(QTNode *par, int nx, int ny, void *data) {
         return NULL;                                \
     }
 
+#define QT_INSERT(dir)                              \
+        if (par->dir) {                             \
+            return insert(par->dir, nx, ny, data);  \
+        } else {                                    \
+            QTNode *new = QTNode_new(nx, ny, data); \
+            par->dir = new;                         \
+            new->parent = par;                      \
+            return new;                             \
+        }                                           \
+    
     QT_TRAVERSE(QT_INSERT)
 }
 
