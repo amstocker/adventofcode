@@ -31,5 +31,6 @@ int main() {
     printf("wrapping: %d\n", wrapping_sum);
     printf("ribbon: %d\n", ribbon_sum);
 
+    fclose(fp);
     return 0;
 }

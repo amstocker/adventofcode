@@ -20,5 +20,6 @@ int main() {
     }
     printf("final floor: %d\n", floor);
 
+    fclose(fp);
     return 0;
 }
