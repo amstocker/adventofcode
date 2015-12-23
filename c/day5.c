@@ -1,6 +1,6 @@
 #include "aoc.h"
 
-const int LINE_SIZE = 16;
+const int MAX_LINE_SIZE = 64;
 
 
 int isvowel(char c) {
@@ -15,13 +15,13 @@ int isvowel(char c) {
 }
 
 
-int isnice(char *str) {
+int isnice(char *str, int len) {
     int vowel_count = 0;
     int contains_dbl = 0;
 
 #define CMP(I, A, B) ((str[(I)] == (A)) && (str[(I)+1] == (B)))
 
-    for (int i = 0; i < LINE_SIZE - 1; i++) {
+    for (int i = 0; i < len - 1; i++) {
        if (CMP(i, 'a', 'b') ||
            CMP(i, 'c', 'd') ||
            CMP(i, 'p', 'q') ||
@@ -34,7 +34,7 @@ int isnice(char *str) {
            vowel_count++;
        }
     }
-    if (isvowel(str[LINE_SIZE-1])) {
+    if (isvowel(str[len-1])) {
         vowel_count++;
     }
     return ((vowel_count >= 3) && contains_dbl);
@@ -47,12 +47,15 @@ int main() {
 
     int nice = 0;
 
-    char *buf = malloc(sizeof(char) * LINE_SIZE);
+    char *buf = malloc(sizeof(char) * MAX_LINE_SIZE);
     char *p = buf;
     while ((c = fgetc(fp)) != EOF) {
         if (c == '\n') {
-            if (isnice(buf)) nice++;
+            if (isnice(buf, (int)(p-buf))) {
+                nice++;
+            }
             p = buf;
+            memset(buf, 0, MAX_LINE_SIZE);
         } else {
             *p++ = c;
         }
