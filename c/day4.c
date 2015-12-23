@@ -19,11 +19,19 @@ void print_md5(unsigned char *hash) {
 }
 
 
-// checks for leading five zeros
-int match(unsigned char *hash) {
+// Part I: checks for five leading zeros
+int match5(unsigned char *hash) {
     return (!hash[0] &&
             !hash[1] &&
              hash[2] < 0x10);
+}
+
+
+// Part II: checks for six leading zeros
+int match6(unsigned char *hash) {
+    return (!hash[0] &&
+            !hash[1] &&
+            !hash[2]);
 }
 
 
@@ -31,7 +39,6 @@ int main() {
     char string[256];
     int s = sizeof(SECRET);
     memcpy(string, SECRET, s);
-    
     unsigned char *buf = malloc(sizeof(char) * MD5_DIGEST_LENGTH);
     
     int modmask = 10;
@@ -43,13 +50,17 @@ int main() {
             modmask *= 10;
         }
         md5(buf, string, s+nlen);
-        if (match(buf)) {
+        if (match6(buf)) {
+            printf("found %s with hash: ", string);
+            print_md5(buf);
             break;
+        }
+        if (match5(buf)) {
+            printf("found %s with hash: ", string);
+            print_md5(buf);
         }
     }
     
-    printf("found %s with hash: ", string);
-    print_md5(buf);
     free(buf);
     return 0;
 }
