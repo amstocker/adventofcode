@@ -1,3 +1,7 @@
+/*
+ * Good Solution from Reddit:
+ *  https://www.reddit.com/r/adventofcode/comments/3viazx/day_5_solutions/cxo8886
+ */
 #include "aoc.h"
 
 const int MAX_LINE_SIZE = 64;

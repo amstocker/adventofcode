@@ -1,3 +1,7 @@
+/*
+ * Good Solution from Reddit:
+ *  https://www.reddit.com/r/adventofcode/comments/3vdn8a/day_4_solutions/cxmqljn
+ */
 #include <openssl/md5.h>
 #include "aoc.h"
 
@@ -64,31 +68,3 @@ int main() {
     free(buf);
     return 0;
 }
-
-
-// Reddit solution: https://www.reddit.com/r/adventofcode/comments/3vdn8a/day_4_solutions/cxmqljn
-/***
-
-#include <openssl/md5.h>
-#include <inttypes.h>
-#include <stdio.h>
-
-#define KEY "abcdef"
-#define LEN 32
-
-#define MASK 0x00f0ffff // adjust for endianness and # of leading zeros
-
-int main()
-{
-    unsigned char hash[16], buf[LEN];
-    long i = 1;
-
-    do MD5(buf, snprintf(buf, LEN, KEY "%ld", ++i), hash);
-    while(*(int32_t *) hash & MASK);
-
-    printf("%ld\n", i);
-
-    return 0;
-}
-
-***/
