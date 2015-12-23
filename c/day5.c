@@ -45,12 +45,10 @@ int p2_isnice(char *str, int len) {
     int contains_match_pair = 0;
     int contains_sandwich = 0;
     for (int i = 0; i < len - 2; i++) {
-        if (i < len - 3) {
-            for (int j = i + 2; j < len-1; j++) {
-                if ((str[i]   == str[j]) &&
-                    (str[i+1] == str[j+1]))
-                    contains_match_pair = 1;
-            }
+        for (int j = i + 2; j < len-1; j++) {
+            if ((str[i]   == str[j]) &&
+                (str[i+1] == str[j+1]))
+                contains_match_pair = 1;
         }
         if (str[i] == str[i+2]) {
             contains_sandwich = 1;
