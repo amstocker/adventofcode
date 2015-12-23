@@ -15,7 +15,7 @@ int isvowel(char c) {
 }
 
 
-int isnice(char *str, int len) {
+int p1_isnice(char *str, int len) {
     int vowel_count = 0;
     int contains_dbl = 0;
 
@@ -41,18 +41,42 @@ int isnice(char *str, int len) {
 }
 
 
+int p2_isnice(char *str, int len) {
+    int contains_match_pair = 0;
+    int contains_sandwich = 0;
+    for (int i = 0; i < len - 2; i++) {
+        if (i < len - 3) {
+            for (int j = i + 2; j < len-1; j++) {
+                if ((str[i]   == str[j]) &&
+                    (str[i+1] == str[j+1]))
+                    contains_match_pair = 1;
+            }
+        }
+        if (str[i] == str[i+2]) {
+            contains_sandwich = 1;
+        }
+    }
+    return (contains_match_pair &&
+            contains_sandwich);
+}
+
+
 int main() {
     FILE *fp = fopen("day5_input.txt", "r");
     char c;
 
-    int nice = 0;
+    int p1_nice = 0;
+    int p2_nice = 0;
 
     char *buf = malloc(sizeof(char) * MAX_LINE_SIZE);
     char *p = buf;
     while ((c = fgetc(fp)) != EOF) {
         if (c == '\n') {
-            if (isnice(buf, (int)(p-buf))) {
-                nice++;
+            if (p1_isnice(buf, (int)(p-buf))) {
+                p1_nice++;
+            }
+            if (p2_isnice(buf, (int)(p-buf))) {
+                p2_nice++;
             }
             p = buf;
             memset(buf, 0, MAX_LINE_SIZE);
@@ -60,7 +84,8 @@ int main() {
             *p++ = c;
         }
     }
-    printf("nice strings: %d\n", nice);
+    printf("Part I nice strings: %d\n", p1_nice);
+    printf("Part II nice strings: %d\n", p2_nice);
 
     fclose(fp);
     free(buf);
