@@ -15,7 +15,8 @@ int main() {
     FILE *fp = fopen("day6_input.txt", "r");
     char *box_fmt = "%d,%d through %d,%d\n";
 
-    int m[1000000] = {0};
+    int p1_m[1000000] = {0};
+    int p2_m[1000000] = {0};
 
     char line[MAX_LINE_LENGTH];
     int ofs, l, b, r, t;
@@ -37,23 +38,27 @@ int main() {
         }
         sscanf(&line[ofs], box_fmt, &l, &b, &r, &t);
 
-#define M(X, Y) (m[1000*(X)+(Y)])
+#define M(P, X, Y) (P##_m[1000*(X)+(Y)])
 
         for (int x = l; x < r + 1; x++) {
             for (int y = b; y < t + 1; y++) {
                 switch (op) {
                     case ON:
-                        M(x, y) = 1;
+                        M(p1, x, y) = 1;
+                        M(p2, x, y)++;
                         break;
                     case OFF:
-                        M(x, y) = 0;
+                        M(p1, x, y) = 0;
+                        M(p2, x, y) = MAX(0, M(p2, x, y) - 1);
                         break;
                     case TOGGLE:
-                        M(x, y) = !M(x, y);
+                        M(p1, x, y) = !M(p1, x, y);
+                        M(p2, x, y) += 2;
                 }
             }
         }
         memset(line, 0, MAX_LINE_LENGTH);
     }
-    printf("lights on: %d\n", int_array_sum(m, 1000000));
+    printf("Part I lights on: %d\n", int_array_sum(p1_m, 1000000));
+    printf("Part II lights on: %d\n", int_array_sum(p2_m, 1000000));
 }
