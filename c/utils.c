@@ -1,6 +1,25 @@
 #include "aoc.h"
 
 
+int count_lines(FILE *fp) {
+    int orig = ftell(fp);
+    int line = 1;
+    char c, tmp;
+    while ((c = fgetc(fp)) != EOF) {
+        if (c == '\n') {
+            if ((tmp = fgetc(fp)) == EOF) {
+                break;
+            } else {
+                ungetc(tmp, fp);
+                line++;
+            }
+        }
+    }
+    fseek(fp, orig, SEEK_SET);
+    return line;
+}
+
+
 int int_array_min(const int *array, const int len) {
     int mele = array[0];
     for (int i = 1; i < len; i++) {

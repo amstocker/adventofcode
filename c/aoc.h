@@ -15,6 +15,7 @@ void error(const char *msg);
 
 
 // utils.c
+int count_lines(FILE * fp);
 int int_array_min(const int *array, const int len);
 int *int_array_mins(const int *array, const int len, const int n);
 int int_array_sum(const int *array, const int len);
