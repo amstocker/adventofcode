@@ -4,8 +4,11 @@
 #define ARGBUF_SIZE 32
 
 
-//static unsigned int REGISTER_A = 0;
-//static unsigned int REGISTER_B = 0;
+// part 1:
+// static unsigned int REGISTER_A = 0;
+// part 2:
+static unsigned int REGISTER_A = 1;
+static unsigned int REGISTER_B = 0;
 
 
 typedef enum {
@@ -26,22 +29,26 @@ typedef enum {
 } Operation;
 
 
-typedef struct {
+typedef struct Instruction {
     Operation op;
     Register reg;
     int val;
+    int lineno;
+    struct Instruction *prev;
+    struct Instruction *next;
 } Instruction;
 
 
-void read_until_eol(FILE *fp, char *linebuf) {
-    // assumes buffer won't overflow...
-    char c;
-    char *p = linebuf;
-    while ((c = fgetc(fp)) != '\n') {
-        *p++ = c;
-    }
-    *p = '\0';
+void print_instruction(Instruction *inst) {
+    printf("[line: %i, op: %i, reg: %i, val: %i]\n",
+            inst->lineno, inst->op, inst->reg, inst->val);
 }
+
+
+typedef struct {
+    Instruction *first;
+    int nlines;
+} Program;
 
 
 Operation parse_op(char *op_str) {
@@ -119,29 +126,151 @@ void parse_two_args(char *linebuf, Instruction *inst) {
 }
 
 
-int main() {
-    FILE *fp = fopen("day23_input.txt", "r");
+void read_until_eol(FILE *fp, char *linebuf) {
+    // assumes buffer won't overflow...
+    char c;
+    char *p = linebuf;
+    while ((c = fgetc(fp)) != '\n') {
+        *p++ = c;
+    }
+    *p = '\0';
+}
+
+
+Instruction *parse_instruction(FILE *fp) {
     char c;
     char linebuf[LINEBUF_SIZE];
     char *p = linebuf;
-
-    Instruction inst;
+    Instruction *inst = calloc(1, sizeof(Instruction));
     while ((c = fgetc(fp)) != EOF) {
         switch (c) {
             case '\n':
                 *p = '\0';
-                parse_one_arg(linebuf, &inst);
+                parse_one_arg(linebuf, inst);
                 break;
             case ',':
                 read_until_eol(fp, p);
-                parse_two_args(linebuf, &inst);
+                parse_two_args(linebuf, inst);
                 break;
             default:
                 *p++ = c;
                 continue;
         }
-
-        p = linebuf;
-        memset(&inst, 0, sizeof inst);
+        return inst;
     }
+    free(inst);
+    return NULL;
+}
+
+
+Program *create_program(char *filename) {
+    FILE *fp = fopen(filename, "r");
+    int line = 0;
+    Program *prog = malloc(sizeof(Program));
+    Instruction *inst;
+    Instruction *last;
+    while ((inst = parse_instruction(fp))) {
+        if (!(prog->first)) {
+            prog->first = inst;
+            inst->prev = NULL;
+        } else {
+            inst->prev = last;
+            last->next = inst;
+        }
+        last = inst;
+        inst->lineno = line;
+        line++;
+    }
+    prog->nlines = line;
+    last->next = NULL;
+    fclose(fp);
+    return prog;
+}
+
+
+void free_program(Program *prog) {
+    Instruction *inst = prog->first;
+    while (inst) {
+        free(inst);
+        inst = inst->next;
+    }
+    free(prog);
+}
+
+
+unsigned int *choose_reg(Instruction *inst) {
+    switch (inst->reg) {
+        case REG_A:
+            return &REGISTER_A;
+        case REG_B:
+            return &REGISTER_B;
+        case REG_INVALID:
+            break;
+    }
+    error("shouldn't get here");
+    return NULL;
+}
+
+
+Instruction *do_jump(Instruction *inst) {
+    int jmp = inst->val;
+    if (jmp >= 0) {
+        while (jmp-- && inst) {
+            inst = inst->next;
+        }
+    } else if (jmp < 0) {
+        while (jmp++ && inst) {
+            inst = inst->prev;
+        }
+    }
+    return inst;
+}
+
+
+Instruction *execute_instruction(Instruction *inst) {
+    switch (inst->op) {
+        case OP_HLF:
+            *choose_reg(inst) >>= 1;
+            break;
+        case OP_TPL:
+            *choose_reg(inst) *= 3;
+            break;
+        case OP_INC:
+            (*choose_reg(inst))++;
+            break;
+        case OP_JMP:
+            return do_jump(inst);
+        case OP_JIE:
+            if (*choose_reg(inst) % 2 == 0) {
+                return do_jump(inst);
+            }
+            break;
+        case OP_JIO:
+            if (*choose_reg(inst) == 1) {
+                return do_jump(inst);
+            }
+            break;
+        case OP_INVALID:
+            error("shouldn't get here");
+            return NULL;
+    }
+    // if no jump
+    return inst->next;
+}
+
+
+void execute_program(Program *prog) {
+    Instruction *next = prog->first;
+    while (next) {
+        next = execute_instruction(next);
+    }
+}
+
+
+int main() {
+    Program *prog = create_program("day23_input.txt");
+    execute_program(prog);
+    free_program(prog);
+    printf("final state; A: %u, B: %u\n", REGISTER_A, REGISTER_B);
+    return 0;
 }
