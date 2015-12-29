@@ -121,14 +121,13 @@ void parse_two_args(char *linebuf, Instruction *inst) {
 }
 
 
-void read_until_eol(FILE *fp, char *linebuf) {
+void read_until_eol(FILE *fp, char *buf) {
     // assumes buffer won't overflow...
     char c;
-    char *p = linebuf;
     while ((c = fgetc(fp)) != '\n') {
-        *p++ = c;
+        *buf++ = c;
     }
-    *p = '\0';
+    *buf = '\0';
 }
 
 
