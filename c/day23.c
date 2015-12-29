@@ -10,13 +10,11 @@
 static unsigned int REGISTER_A = 1;
 static unsigned int REGISTER_B = 0;
 
-
 typedef enum {
     REG_A,
     REG_B,
     REG_INVALID,
 } Register;
-
 
 typedef enum {
     OP_HLF,
@@ -28,7 +26,6 @@ typedef enum {
     OP_INVALID,
 } Operation;
 
-
 typedef struct Instruction {
     Operation op;
     Register reg;
@@ -38,17 +35,15 @@ typedef struct Instruction {
     struct Instruction *next;
 } Instruction;
 
+typedef struct {
+    Instruction *first;
+    int nlines;
+} Program;
 
 void print_instruction(Instruction *inst) {
     printf("[line: %i, op: %i, reg: %i, val: %i]\n",
             inst->lineno, inst->op, inst->reg, inst->val);
 }
-
-
-typedef struct {
-    Instruction *first;
-    int nlines;
-} Program;
 
 
 Operation parse_op(char *op_str) {
@@ -144,6 +139,9 @@ Instruction *parse_instruction(FILE *fp) {
     Instruction *inst = calloc(1, sizeof(Instruction));
     while ((c = fgetc(fp)) != EOF) {
         switch (c) {
+            default:
+                *p++ = c;
+                continue;
             case '\n':
                 *p = '\0';
                 parse_one_arg(linebuf, inst);
@@ -152,9 +150,6 @@ Instruction *parse_instruction(FILE *fp) {
                 read_until_eol(fp, p);
                 parse_two_args(linebuf, inst);
                 break;
-            default:
-                *p++ = c;
-                continue;
         }
         return inst;
     }
