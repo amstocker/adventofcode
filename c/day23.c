@@ -163,8 +163,7 @@ Instruction *parse_instruction(FILE *fp) {
 }
 
 
-Program *create_program(char *filename) {
-    FILE *fp = fopen(filename, "r");
+Program *create_program(FILE *fp) {
     int line = 0;
     Program *prog = malloc(sizeof(Program));
     Instruction *inst;
@@ -183,7 +182,6 @@ Program *create_program(char *filename) {
     }
     prog->nlines = line;
     last->next = NULL;
-    fclose(fp);
     return prog;
 }
 
@@ -268,9 +266,13 @@ void execute_program(Program *prog) {
 
 
 int main() {
-    Program *prog = create_program("day23_input.txt");
+    FILE *fp = fopen("day23_input.txt", "r");
+    Program *prog = create_program(fp);
+    fclose(fp);
+    
     execute_program(prog);
-    free_program(prog);
     printf("final state; A: %u, B: %u\n", REGISTER_A, REGISTER_B);
+    
+    free_program(prog);
     return 0;
 }
