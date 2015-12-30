@@ -1,7 +1,8 @@
 #include "aoc.h"
 
 
-const long LIMIT = 29000000;
+//const long LIMIT = 29000000;
+const long LIMIT = 1000;
 
 
 long present_count(long house) {
@@ -17,13 +18,10 @@ long present_count(long house) {
 
 int main() {
     long cnt;
-    for (long i = 750000;; i++) {
+    for (long i = 1;; i++) {
         cnt = present_count(i);
-        if (i % 10000 == 0) {
-            printf("house %li got %li presents.\n", i, cnt);
-        }
+        printf("house %li got %li presents.\n", i, cnt);
         if (cnt >= LIMIT) {
-            printf("house %li got %li presents.\n", i, cnt);
             break;
         }
     }

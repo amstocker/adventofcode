@@ -5,6 +5,7 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <assert.h>
 #include <limits.h>
@@ -42,3 +43,23 @@ QTree *QTree_new();
 void QTree_free(QTree *qt);
 QTNode *QTree_set(QTree *qt, int x, int y, void *data);
 void *QTree_get(QTree *qt, int x, int y);
+
+
+// map.c
+typedef struct Map {
+    char **key;
+    void **val;
+    int size;
+    int nelem;
+    int nused;
+} Map;
+
+Map *Map_new();
+void Map_free(Map *m);
+void __map_put(Map *m, char *key, void *val);
+void *__map_get(Map *m, char *key);
+void *__map_remove(Map *m, char *key);
+
+#define Map_put(M, K, V) __map_put((M), (char *)(K), (V));
+#define Map_get(M, K) __map_get((M), (char *)(K))
+#define Map_remove(M, K) __map_remove((M), (char *)(K))
