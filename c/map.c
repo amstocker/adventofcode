@@ -1,9 +1,5 @@
 #include "aoc.h"
 
-#define INIT_SIZE 16
-#define TOMBSTONE ((void *)-1)
-#define REHASH_SIZE 0.7
-
 
 static inline uint32_t fnv_hash(char *p) {
     uint32_t r = 2166136261;
@@ -22,6 +18,9 @@ static inline uint32_t djb2_hash(char *p) {
     }
     return r;
 }
+
+// use djb2 for strings
+Map_hash_func_t Map_hash_func = djb2_hash;
 
 
 Map *Map_new() {
@@ -54,7 +53,7 @@ static void maybe_rehash(Map *m) {
         if (m->key[i] == NULL || m->key[i] == TOMBSTONE) {
             continue;
         }
-        int j = fnv_hash(m->key[i]) & mask;
+        int j = Map_hash_func(m->key[i]) & mask;
         for (;; j = (j + 1) & mask) {
             if (k[j] != NULL) {
                 continue;
@@ -76,7 +75,7 @@ static void maybe_rehash(Map *m) {
 void __map_put(Map *m, char *key, void *val) {
     maybe_rehash(m);
     int mask = m->size - 1;
-    int i = fnv_hash(key) & mask;
+    int i = Map_hash_func(key) & mask;
     for (;; i = (i + 1) & mask) {
         char *k = m->key[i];
         if (k == NULL || k == TOMBSTONE) {
@@ -98,7 +97,7 @@ void __map_put(Map *m, char *key, void *val) {
 
 void *__map_get(Map *m, char *key) {
     int mask = m->size - 1;
-    int i = fnv_hash(key) & mask;
+    int i = Map_hash_func(key) & mask;
     for (; m->key[i] != NULL; i = (i + 1) & mask) {
         if (m->key[i] != TOMBSTONE && !strcmp(m->key[i], key)) {
             return m->val[i];
@@ -110,7 +109,7 @@ void *__map_get(Map *m, char *key) {
 
 void *__map_remove(Map *m, char *key) {
     int mask = m->size - 1;
-    int i = fnv_hash(key) & mask;
+    int i = Map_hash_func(key) & mask;
     for (; m->key[i] != NULL; i = (i + 1) & mask) {
         if (m->key[i] == TOMBSTONE || strcmp(m->key[i], key)) {
             continue;

@@ -46,6 +46,12 @@ void *QTree_get(QTree *qt, int x, int y);
 
 
 // map.c
+#define INIT_SIZE 16
+#define TOMBSTONE ((void *)-1)
+#define REHASH_SIZE 0.7
+
+typedef uint32_t (*Map_hash_func_t) (char*);
+
 typedef struct Map {
     char **key;
     void **val;
@@ -63,3 +69,14 @@ void *__map_remove(Map *m, char *key);
 #define Map_put(M, K, V) __map_put((M), (char *)(K), (V));
 #define Map_get(M, K) __map_get((M), (char *)(K))
 #define Map_remove(M, K) __map_remove((M), (char *)(K))
+
+
+// set.c
+typedef Map Set;
+
+Set *Set_new();
+void Set_free(Set *s);
+void Set_add(Set *s, char *v);
+int Set_check(Set *s, char *v);
+char *Set_remove(Set *s, char *v);
+char **Set_iter(Set *s);
